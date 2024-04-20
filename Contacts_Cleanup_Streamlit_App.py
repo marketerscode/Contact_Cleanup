@@ -24,7 +24,7 @@ This tool allows you to upload a CSV file containing contact information and sta
 
 2. **Wait for Processing**: Once the file is uploaded, the tool will process the data. This may take a few moments depending on the size of the file.
 
-3. **Review the Processed Data**: After processing, the tool will display the original and processed data side by side. You can compare the changes made to each field.
+3. **Review the Processed Data**: After processing, the tool will display the original and processed data side by side. You can compare the changes made to each field. Standardized fields will be labeled as new columns.
 
 4. **Download the Processed CSV**: If you're satisfied with the changes, you can download the processed CSV file by clicking on the "Download processed CSV" button.
 
@@ -83,10 +83,30 @@ def standardize_state(state):
 # Define a function to standardize countries
 def standardize_country(country):
     """Convert country abbreviations to full country names."""
-    countries = {'USA': 'United States', 'UK': 'United Kingdom', 'CAN': 'Canada', 'AUS': 'Australia', 
-                 'DEU': 'Germany', 'FRA': 'France', 'ITA': 'Italy', 'JPN': 'Japan', 'CHN': 'China', 
-                 'RUS': 'Russia', 'IND': 'India', 'BRA': 'Brazil', 'ZAF': 'South Africa', 'MEX': 'Mexico'}
-    return countries.get(country, country)
+    countries = {
+        'USA': 'United States', 'UK': 'United Kingdom', 'CAN': 'Canada', 'AUS': 'Australia', 
+        'DEU': 'Germany', 'FRA': 'France', 'ITA': 'Italy', 'JPN': 'Japan', 'CHN': 'China', 
+        'RUS': 'Russia', 'IND': 'India', 'BRA': 'Brazil', 'ZAF': 'South Africa', 'MEX': 'Mexico',
+        'ESP': 'Spain', 'NLD': 'Netherlands', 'BEL': 'Belgium', 'CHE': 'Switzerland', 'SWE': 'Sweden', 
+        'NOR': 'Norway', 'DNK': 'Denmark', 'FIN': 'Finland', 'POL': 'Poland', 'AUT': 'Austria',
+        'HUN': 'Hungary', 'PRT': 'Portugal', 'IRL': 'Ireland', 'CZE': 'Czech Republic', 'ROU': 'Romania', 
+        'NZL': 'New Zealand', 'SGP': 'Singapore', 'MYS': 'Malaysia', 'THA': 'Thailand', 'PHL': 'Philippines', 
+        'IDN': 'Indonesia', 'VNM': 'Vietnam', 'TUR': 'Turkey', 'GRC': 'Greece', 'ISR': 'Israel', 
+        'SAU': 'Saudi Arabia', 'ARE': 'United Arab Emirates', 'QAT': 'Qatar', 'KWT': 'Kuwait', 
+        'OMN': 'Oman', 'ARG': 'Argentina', 'CHL': 'Chile', 'COL': 'Colombia', 'PER': 'Peru', 
+        'VEN': 'Venezuela', 'URY': 'Uruguay', 'EGY': 'Egypt', 'ZWE': 'Zimbabwe', 'NGA': 'Nigeria', 
+        'KEN': 'Kenya', 'GHA': 'Ghana', 'ETH': 'Ethiopia', 'UGA': 'Uganda', 'MAR': 'Morocco', 
+        'DZA': 'Algeria', 'TUN': 'Tunisia', 'LBY': 'Libya', 'CMR': 'Cameroon', 'CIV': 'Ivory Coast',
+        'UKR': 'Ukraine', 'BLR': 'Belarus', 'KAZ': 'Kazakhstan', 'AZE': 'Azerbaijan', 'ARM': 'Armenia', 
+        'GEO': 'Georgia', 'MDA': 'Moldova', 'BGR': 'Bulgaria', 'SRB': 'Serbia', 'HRV': 'Croatia',
+        'BIH': 'Bosnia and Herzegovina', 'SVN': 'Slovenia', 'SVK': 'Slovakia', 'LVA': 'Latvia', 
+        'LTU': 'Lithuania', 'EST': 'Estonia', 'MLT': 'Malta', 'ISL': 'Iceland', 'CYP': 'Cyprus',
+        'LBN': 'Lebanon', 'JOR': 'Jordan', 'SYR': 'Syria', 'IRQ': 'Iraq', 'AFG': 'Afghanistan',
+        'PAK': 'Pakistan', 'BGD': 'Bangladesh', 'LKA': 'Sri Lanka', 'MMR': 'Myanmar', 'KHM': 'Cambodia', 
+        'LAO': 'Laos', 'PRK': 'North Korea', 'KOR': 'South Korea', 'MNG': 'Mongolia', 'NPL': 'Nepal', 
+        'BTN': 'Bhutan', 'IRN': 'Iran'
+    }
+    return countries.get(country.upper(), country)  # Convert to uppercase to match keys, default to input if not found
 
 # Define a function to standardize job titles
 def standardize_job_title(title, standard_titles):
