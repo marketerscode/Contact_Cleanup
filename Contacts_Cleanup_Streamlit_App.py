@@ -82,7 +82,7 @@ if uploaded_file is not None:
         df['Standardized Country'] = df['Country'].apply(standardize_country)
         df['FirstName'] = df['FirstName'].apply(standardize_name)
         df['LastName'] = df['LastName'].apply(standardize_name)
-        df['Email Validation'] = df['Email'].apply(validate_email)
+        df['Email Validation'] = df['Email'].apply(lambda email: validate_email(str(email)))
 
         # Standardize job titles
         standard_titles = [
