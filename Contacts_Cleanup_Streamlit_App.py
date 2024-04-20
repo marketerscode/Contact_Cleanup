@@ -5,6 +5,40 @@ import usaddress
 import streamlit as st
 import re
 
+
+st.title('Contact Data Cleanup')
+
+instructions = """
+# How to Use the Contact Data Cleanup Tool
+
+This tool allows you to upload a CSV file containing contact information and standardize the data. The standardization process includes:
+
+- Capitalizing the first letter of the first and last names.
+- Formatting phone numbers to the format (XXX) XXX-XXXX.
+- Converting state abbreviations to full state names.
+- Converting country abbreviations to full country names.
+- Standardizing job titles based on a predefined list.
+- Validating email addresses.
+
+## Steps to Use the Tool:
+
+1. **Upload a CSV File**: Click on the "Choose a CSV file" button to upload your CSV file containing the contact information.
+
+2. **Wait for Processing**: Once the file is uploaded, the tool will process the data. This may take a few moments depending on the size of the file.
+
+3. **Review the Processed Data**: After processing, the tool will display the original and processed data side by side. You can compare the changes made to each field.
+
+4. **Download the Processed CSV**: If you're satisfied with the changes, you can download the processed CSV file by clicking on the "Download processed CSV" button.
+
+## Notes:
+
+- Ensure your CSV file contains columns for 'Address', 'Phone', 'State', 'Country', 'FirstName', 'LastName', 'Email', and 'Job Title'.
+- The tool will attempt to standardize the data in these columns. If a column is missing or contains unexpected data, the tool may not be able to process it correctly.
+- The tool uses fuzzy matching for job title standardization, which means it tries to match the closest standard title for each job title in your data.
+"""
+
+st.markdown(instructions, unsafe_allow_html=True)
+
 # Define a function to standardize addresses
 def standardize_address(address):
     """Standardize addresses using the usaddress library, replacing 'Address' with 'Street'."""
@@ -18,15 +52,15 @@ def standardize_address(address):
 def standardize_phone(phone):
     """Standardize phone numbers to the format (XXX) XXX-XXXX."""
     try:
-        phone = phonenumbers.parse(phone, 'US') # Specify 'US' as the country code
+        phone = phonenumbers.parse(phone, 'US')  # Specify 'US' as the country code
         return phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.NATIONAL)
     except:
         return phone
 
 # Define a function to return both full state names and abbreviations
 def standardize_state(state):
-    """Return the full name of the state based on input, which could be either."""
-    states = {v: k for k, v in {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 
+    """Return the full name of the state and its abbreviation based on input, which could be either."""
+    states = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 
               'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 
               'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 
               'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 
@@ -36,9 +70,9 @@ def standardize_state(state):
               'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 
               'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 
               'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 
-              'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}.items()}
-    full_name = state.title()  # Assume it might be full name initially
-    abbreviation = states.get(full_name, state)  # Get abbreviation from full name, or keep original if not found
+              'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}
+    abbreviation = states.get(state.upper(), state)
+    full_name = next((name for abbr, name in states.items() if abbr == state.upper()), state)
     return abbreviation, full_name
 
 # Define a function to standardize countries
@@ -78,7 +112,7 @@ if uploaded_file is not None:
         # Standardize the data values
         df['Standardized Address'] = df['Address'].apply(standardize_address)
         df['Standardized Phone'] = df['Phone'].apply(standardize_phone)
-        df['Standardized State'] = df['State'].apply(lambda x: standardize_state(x)[1]) # Use the second element of the tuple returned by standardize_state
+        df['Standardized State Abbreviation'], df['Standardized State'] = zip(*df['State'].apply(standardize_state))
         df['Standardized Country'] = df['Country'].apply(standardize_country)
         df['FirstName'] = df['FirstName'].apply(standardize_name)
         df['LastName'] = df['LastName'].apply(standardize_name)
@@ -97,32 +131,16 @@ if uploaded_file is not None:
             'Legal Counsel', 'Paralegal', 'Pharmacist', 'Physical Therapist', 'Occupational Therapist', 'Dentist',
             'Educational Administrator', 'Academic Advisor', 'Research Scientist', 'Laboratory Technician',
             'Environmental Scientist', 'Social Media Manager', 'Content Strategist', 'Event Planner', 'Logistics Coordinator',
-            'Director of Engineering', 'Chief Information Officer', 'Business Development Manager', 'Software Engineer',
-            'System Engineer', 'Product Designer', 'Data Analyst', 'Clinical Research Coordinator', 'Biomedical Engineer',
-            'Public Relations Manager', 'Media Planner', 'IT Manager', 'Marketing Director', 'Creative Director',
-            'Brand Manager', 'SEO Specialist', 'Recruiter', 'Copywriter', 'Technical Writer', 'Health and Safety Engineer',
-            'Community Manager', 'Customer Success Manager', 'User Experience Researcher', 'Database Administrator',
-            'Machine Learning Engineer', 'Network Security Engineer', 'Solutions Architect', 'Technical Support Specialist',
-            'Sales Engineer', 'Corporate Lawyer', 'Management Consultant', 'Risk Manager', 'Audit Manager', 'Portfolio Manager',
-            'Investment Analyst', 'Compliance Manager', 'Product Marketing Manager', 'HR Coordinator', 'Staff Accountant',
-            'Digital Marketing Manager', 'Advertising Manager', 'Healthcare Administrator', 'Clinical Manager',
-            'Industrial Engineer', 'Production Manager', 'Construction Manager', 'Architect', 'Software Architect',
-            'Test Engineer', 'Data Engineer', 'Chief Compliance Officer', 'Actuary', 'Statistician', 'Economist',
-            'Market Research Analyst', 'Real Estate Agent', 'Property Manager', 'Clinical Psychologist', 'Veterinarian',
-            'Dietitian', 'Nutritionist', 'Pharmacy Technician', 'Radiologic Technologist', 'Physical Therapy Assistant',
-            'Occupational Therapy Assistant', 'Dental Hygienist', 'Medical Assistant', 'Home Health Aide', 'Nursing Assistant',
-            'Pediatrician', 'Oncologist', 'Cardiologist', 'Dermatologist', 'Neurologist', 'Psychiatrist', 'Surgeon',
-            'Anesthesiologist', 'Orthodontist', 'Optometrist', 'Chiropractor', 'Podiatrist', 'Audiologist', 'Speech-Language Pathologist',
-            'Respiratory Therapist', 'Radiation Therapist', 'Surgeon', 'Obstetrician', 'Gynecologist', 'Allergist',
-            'Immunologist', 'Urologist', 'Endocrinologist', 'Gastroenterologist', 'Ophthalmologist', 'Orthopedic Surgeon',
-            'Emergency Physician', 'Family Physician', 'Internal Medicine Physician', 'Geriatrician', 'Palliative Physician',
-            'Pediatric Nurse', 'Psychiatric Nurse', 'Perioperative Nurse (OR Nurse)', 'Critical Care Nurse', 'Dialysis Nurse',
-            'Nurse Midwife', 'Nurse Anesthetist', 'Clinical Nurse Specialist', 'Executive Assistant', 'Office Manager',
-            'Receptionist', 'Legal Secretary', 'Medical Secretary', 'Information Clerk', 'Librarian', 'Library Assistant',
-            'Curator', 'Art Director', 'Film and Video Editor', 'Photographer', 'Interior Designer', 'Landscape Architect',
-            'Teacher', 'Principal', 'School Counselor', 'Camp Counselor', 'Coach', 'Art Teacher', 'Music Teacher',
-            'Physical Education Teacher', 'English Teacher', 'Math Teacher', 'Science Teacher', 'Social Studies Teacher',
-            'Foreign Language Teacher', 'Special Education Teacher'
+            'Information Technology Director', 'System Analyst', 'Security Analyst', 'Application Developer',
+            'Information Security Manager', 'Software Engineer', 'Systems Engineer', 'IT Project Manager',
+            'Network Engineer', 'Database Administrator', 'Cloud Solutions Architect', 'DevOps Engineer',
+            'Frontend Developer', 'Backend Developer', 'Full Stack Developer', 'Data Center Manager',
+            'IT Coordinator', 'Technical Support Specialist', 'Help Desk Technician', 'Cybersecurity Specialist',
+            'Data Entry Clerk', 'IT Consultant', 'Software Quality Assurance Tester', 'User Interface Designer',
+            'User Experience Designer', 'Mobile Developer', 'Webmaster', 'SEO Specialist', 'Digital Marketing Specialist',
+            'E-commerce Manager', 'IT Systems Administrator', 'Network Operations Manager', 'Cloud Systems Engineer',
+            'Penetration Tester', 'IT Asset Manager', 'IT Service Manager', 'Software Sales Specialist',
+            'Customer Support Engineer', 'Technical Sales Engineer', 'Business Systems Analyst', 'CRM Technical Developer'
         ]  
         df['Standardized Job Title'] = df['Job Title'].apply(lambda title: standardize_job_title(title, standard_titles))
 
