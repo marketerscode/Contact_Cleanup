@@ -58,9 +58,15 @@ if uploaded_file is not None:
 
         st.write(df)
 
-        # Convert DataFrame to CSV and let user download it
+ # Convert DataFrame to CSV and let user download it
         csv = df.to_csv(index=False)
         st.download_button(
             label="Download processed CSV",
             data=csv,
-            file
+            file_name='contacts_processed.csv',
+            mime='text/csv',
+        )
+    except Exception as e:
+        st.error(f"Error processing file: {e}")
+else:
+    st.info('Upload a CSV file to begin.')
