@@ -25,7 +25,7 @@ def standardize_phone(phone):
 
 # Define a function to return both full state names and abbreviations
 def standardize_state(state):
-    """Return both full state name and abbreviation based on input, which could be either."""
+    """Return the full name of the state based on input, which could be either."""
     states = {v: k for k, v in {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 
               'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 
               'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 
@@ -56,8 +56,8 @@ def standardize_job_title(title, standard_titles):
 
 # Standardize names by capitalizing them
 def standardize_name(name):
-    """Capitalize the first and last names."""
-    return name.upper()
+    """Capitalize the first letter of the first and last names."""
+    return name.capitalize()
 
 # Validate email addresses
 def validate_email(email):
@@ -78,7 +78,7 @@ if uploaded_file is not None:
         # Standardize the data values
         df['Standardized Address'] = df['Address'].apply(standardize_address)
         df['Standardized Phone'] = df['Phone'].apply(standardize_phone)
-        df[['Standardized State Abbreviation', 'Standardized State']] = df['State'].apply(lambda x: pd.Series(standardize_state(x)))
+        df['Standardized State'] = df['State'].apply(lambda x: standardize_state(x)[1]) # Use the second element of the tuple returned by standardize_state
         df['Standardized Country'] = df['Country'].apply(standardize_country)
         df['FirstName'] = df['FirstName'].apply(standardize_name)
         df['LastName'] = df['LastName'].apply(standardize_name)
@@ -103,8 +103,27 @@ if uploaded_file is not None:
             'Brand Manager', 'SEO Specialist', 'Recruiter', 'Copywriter', 'Technical Writer', 'Health and Safety Engineer',
             'Community Manager', 'Customer Success Manager', 'User Experience Researcher', 'Database Administrator',
             'Machine Learning Engineer', 'Network Security Engineer', 'Solutions Architect', 'Technical Support Specialist',
-            'Sales Engineer', 'Corporate Lawyer', 'Management Consultant', 'Risk Manager', 'Audit Manager', 'Portfolio Manager'
-        ]  # Expanded list to 100 standard job titles
+            'Sales Engineer', 'Corporate Lawyer', 'Management Consultant', 'Risk Manager', 'Audit Manager', 'Portfolio Manager',
+            'Investment Analyst', 'Compliance Manager', 'Product Marketing Manager', 'HR Coordinator', 'Staff Accountant',
+            'Digital Marketing Manager', 'Advertising Manager', 'Healthcare Administrator', 'Clinical Manager',
+            'Industrial Engineer', 'Production Manager', 'Construction Manager', 'Architect', 'Software Architect',
+            'Test Engineer', 'Data Engineer', 'Chief Compliance Officer', 'Actuary', 'Statistician', 'Economist',
+            'Market Research Analyst', 'Real Estate Agent', 'Property Manager', 'Clinical Psychologist', 'Veterinarian',
+            'Dietitian', 'Nutritionist', 'Pharmacy Technician', 'Radiologic Technologist', 'Physical Therapy Assistant',
+            'Occupational Therapy Assistant', 'Dental Hygienist', 'Medical Assistant', 'Home Health Aide', 'Nursing Assistant',
+            'Pediatrician', 'Oncologist', 'Cardiologist', 'Dermatologist', 'Neurologist', 'Psychiatrist', 'Surgeon',
+            'Anesthesiologist', 'Orthodontist', 'Optometrist', 'Chiropractor', 'Podiatrist', 'Audiologist', 'Speech-Language Pathologist',
+            'Respiratory Therapist', 'Radiation Therapist', 'Surgeon', 'Obstetrician', 'Gynecologist', 'Allergist',
+            'Immunologist', 'Urologist', 'Endocrinologist', 'Gastroenterologist', 'Ophthalmologist', 'Orthopedic Surgeon',
+            'Emergency Physician', 'Family Physician', 'Internal Medicine Physician', 'Geriatrician', 'Palliative Physician',
+            'Pediatric Nurse', 'Psychiatric Nurse', 'Perioperative Nurse (OR Nurse)', 'Critical Care Nurse', 'Dialysis Nurse',
+            'Nurse Midwife', 'Nurse Anesthetist', 'Clinical Nurse Specialist', 'Executive Assistant', 'Office Manager',
+            'Receptionist', 'Legal Secretary', 'Medical Secretary', 'Information Clerk', 'Librarian', 'Library Assistant',
+            'Curator', 'Art Director', 'Film and Video Editor', 'Photographer', 'Interior Designer', 'Landscape Architect',
+            'Teacher', 'Principal', 'School Counselor', 'Camp Counselor', 'Coach', 'Art Teacher', 'Music Teacher',
+            'Physical Education Teacher', 'English Teacher', 'Math Teacher', 'Science Teacher', 'Social Studies Teacher',
+            'Foreign Language Teacher', 'Special Education Teacher'
+        ]  
         df['Standardized Job Title'] = df['Job Title'].apply(lambda title: standardize_job_title(title, standard_titles))
 
         # Display the original and the new DataFrame
