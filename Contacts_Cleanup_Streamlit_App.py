@@ -9,8 +9,6 @@ import re
 st.title('Contact Data Cleanup')
 
 instructions = """
-# How to Use the Contact Data Cleanup Tool
-
 This tool allows you to upload a CSV file containing contact information and standardize the data. The standardization process includes:
 
 - Capitalizing the first letter of the first and last names.
@@ -71,10 +69,17 @@ def standardize_state(state):
               'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 
               'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 
               'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}
-    abbreviation = states.get(state.upper(), state)
-    full_name = next((name for abbr, name in states.items() if abbr == state.upper()), state)
+    rev_states = {v: k for k, v in states.items()}  # Reverse mapping for full name to abbreviation
+    if state.upper() in states:
+        abbreviation = state.upper()
+        full_name = states[abbreviation]
+    elif state.title() in rev_states:
+        full_name = state.title()
+        abbreviation = rev_states[full_name]
+    else:
+        abbreviation = full_name = state  # If no match is found, return the input as is
     return abbreviation, full_name
-
+    
 # Define a function to standardize countries
 def standardize_country(country):
     """Convert country abbreviations to full country names."""
